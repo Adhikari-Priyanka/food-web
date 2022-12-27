@@ -1,0 +1,50 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+using System;
+
+
+public class FoodWeb1 : MonoBehaviour
+{
+    public int Nphtyoplankton = 1; //integer to store no. of phytoplankton 
+    //not double because Rp will convert things to int
+    public TMP_Text NphytoText; //TMP text to display no of clicks
+
+    public int Days; //Integer to store no. of days since start
+    public TMP_Text DaysText; //TMP text to display no. of days
+
+    // Start is called before the first frame update
+    void Start()
+    {
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Updated counters
+        DaysText.text = "No. of days since start = " + Days; 
+        Nphtyoplankton = Rp(100, 99, -0.679);
+        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;
+
+        
+    }
+
+        public void StartTime(){
+        Days ++; //increase by one day
+            }
+
+
+    public int Rp(double c, double a, double b){
+        //int c is carrying capacity
+        //int a is (int c/int y0)-1
+        //double b (in decimals, see derivation)
+        double t = (double)Days; //convert time to double
+
+        double i = Math.Exp(b*t);
+        double yt = c/(1 + a*i);
+        int result = (int)yt;
+        return result;    }
+
+}
