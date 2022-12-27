@@ -7,34 +7,60 @@ using System;
 
 public class FoodWeb1 : MonoBehaviour
 {
+    //PHYTOPLANKTON
     public int Nphtyoplankton = 1; //integer to store no. of phytoplankton 
     //not double because Rp will convert things to int
     public TMP_Text NphytoText; //TMP text to display no of clicks
+    public double Aphytoplankton=99;  //double to store A value for phytoplankton growth
 
+    //TIME
     public int Days; //Integer to store no. of days since start
     public TMP_Text DaysText; //TMP text to display no. of days
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    //FISH
+    public int Nfish = 0; //integer to store no. of fish
+    public TMP_Text NfishText; //TMP text to display no of fish
+    public int Cfish = 10; //integer to store cost of fish
+    public TMP_Text CfishText; //TMP text to display cost of fish
 
-    }
+ 
+    void Start()    {   }
 
     // Update is called once per frame
     void Update()
     {
-        // Updated counters
+        // Updated counters - Moving to within functions
         DaysText.text = "No. of days since start = " + Days; 
-        Nphtyoplankton = Rp(100, 99, -0.679);
-        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;
-
         
     }
 
         public void StartTime(){
         Days ++; //increase by one day
-            }
-
+        Nphtyoplankton = Rp(100, Aphytoplankton, -0.679); //RUn log growth for phytoplankton
+        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton; //Update text
+        }
+        
+        public void AddFish(){
+            if (Nphtyoplankton > Cfish){
+                Nfish ++; //Fish counter increment
+                NfishText.text = "No. of fish = " + Nfish; //Update fish text
+                Nphtyoplankton = Nphtyoplankton - Cfish; //Subtract cost from no. of phytoplankton
+                NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;  //Update phytoplankton text
+                Cfish = Cfish +10; //Increase cost
+                CfishText.text = "Add fish plankton req = " + Cfish; //Update cost text
+                }
+            else {print("Collect more phytoplankton");} //TO FIX LATER! MAKE IT APPEAR MORE CLEARER
+        }
+        public void RemoveFish(){
+            //check for <0 fish
+            if (Nfish >0){
+                Nfish --; //Fish counter decrease
+                NfishText.text = "No. of fish = " + Nfish; //Update fish text
+                Cfish = Cfish -10; //Decrease cost
+                CfishText.text = "Add fish plankton req = " + Cfish; //Update cost text
+                }
+        }
+        
 
     public int Rp(double c, double a, double b){
         //int c is carrying capacity
