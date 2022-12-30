@@ -13,9 +13,9 @@ public class FoodWeb1 : MonoBehaviour
     public TMP_Text NphytoText; //TMP text to display no of clicks
     public float y0phytoplankton; //float to store y0 of phytoplankton
     public float tphytoplankton = 0;
-    public float aphytoplankton=99; 
-    public float cphytoplankton =100; 
-    public float bphytoplankton = -0.679f;
+    public float aphytoplankton=99; //float to store A value for phytoplankton intial
+    public float cphytoplankton =100; //float to store value C value for phytoplankton
+    public float bphytoplankton = -0.679f; //float to store vB value for phytoplankton
     
     //TIME
     public int Days; //Integer to store no. of days since start
@@ -26,10 +26,17 @@ public class FoodWeb1 : MonoBehaviour
     public TMP_Text NfishText; //TMP text to display no of fish
     public int Cfish = 10; //integer to store cost of fish
     public TMP_Text CfishText; //TMP text to display cost of fish
+    public float y0fish;
+    public float tfish = 0; //float to store time since fist fish (or a change)
+    public float afish = 9; //float to store A value for fish initial
+    public float bfish = -0.439f; //float to store B value for fish
+    public float cfish = 10; //float to store C value for fish
+
 
  
     void Start(){
-    
+    y0phytoplankton = (float)Nphtyoplankton; 
+    y0fish = (float)Nfish;
 
     }
     void Update()
@@ -40,32 +47,35 @@ public class FoodWeb1 : MonoBehaviour
         public void StartTime(){
         Days ++; //increase by one day
         DaysText.text = "No. of days since start = " + Days; //update day text
-         y0phytoplankton = (float)Nphtyoplankton;
-        Nphtyoplankton = Rp(y0phytoplankton, aphytoplankton); //Run log growth for phytoplankton
+        //organism time update
+        tphytoplankton ++;
+
+        Nphtyoplankton = Rp(aphytoplankton, bphytoplankton, cphytoplankton, tphytoplankton); //Run log growth for phytoplankton
         NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton; //Update Nphyto text
 
-        //tphyto update
-        tphytoplankton++;
-
+        if (Nfish>0){
+            tfish ++;
+            Nfish = Rp(afish, bfish, cfish, tfish); //Run log growth for fish
+            print("start time nfish = " +Nfish);
+            NfishText.text = "No. of fish = " + Nfish;
+        }
+        else if(Nfish ==0){Nfish=0;} // not sure how but this helped
+        
         }
         
         public void AddFish(){
-            if (Nphtyoplankton > Cfish){
+            if (Nphtyoplankton >= Cfish){
                 Nfish ++; //Fish counter increment
                 NfishText.text = "No. of fish = " + Nfish; //Update fish text
                 Nphtyoplankton = Nphtyoplankton - Cfish; //Subtract cost from no. of phytoplankton
                 y0phytoplankton = Nphtyoplankton; //reset y0 
-               tphytoplankton = 0;  //reset tphyto
-               aphytoplankton = (cphytoplankton/y0phytoplankton -1); //reset aphyto
-               print("y0 new = " + y0phytoplankton); // just to check
-               print("t new = " + tphytoplankton);
-               print("a new = "+ aphytoplankton);
-
+                tphytoplankton = 0;  //reset tphyto
+                aphytoplankton = (cphytoplankton/y0phytoplankton -1); //reset aphyto
                 NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;  //Update phytoplankton text
                 Cfish = Cfish +10; //Increase cost
                 CfishText.text = "Add fish plankton req = " + Cfish; //Update cost text
                 }
-            else {print("Collect more phytoplankton");} //TO FIX LATER! MAKE IT APPEAR MORE CLEARER
+            else {CfishText.text = "Collect more plankton!";} //TO FIX LATER! MAKE IT APPEAR MORE CLEARER
         }
         
         public void RemoveFish(){
@@ -73,21 +83,23 @@ public class FoodWeb1 : MonoBehaviour
             if (Nfish >0){
                 Nfish --; //Fish counter decrease
                 NfishText.text = "No. of fish = " + Nfish; //Update fish text
-                Cfish = Cfish -10; //Decrease cost
+                if (Cfish >10){Cfish = Cfish -10;} //Decrease cost
                 CfishText.text = "Add fish plankton req = " + Cfish; //Update cost text
                 }
         }
+    
+    public void Reset(){}
         
 
-    public int Rp(float y0, float a){
+    public int Rp(float a, float b, float c, float t){
         //int c is carrying capacity
         //int a is (int c/int y0)-1
         //float b (in decimals, see derivation)
         //take time in terms of how many t has it been since this specfic y0 was used
 
-        double i1 = Math.Exp(bphytoplankton*tphytoplankton);
+        double i1 = Math.Exp(b*t);
         float i2 = (float)i1;
-        float yt = cphytoplankton/(1 + a*i2);
+        float yt = c/(1 + a*i2);
         int result = (int)yt;
         return result;    }
 
