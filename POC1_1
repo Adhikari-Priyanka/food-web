@@ -24,8 +24,8 @@ public class FoodWeb1 : MonoBehaviour
     //FISH
     public int Nfish = 0; //integer to store no. of fish
     public TMP_Text NfishText; //TMP text to display no of fish
-    public int Cfish = 10; //integer to store cost of fish
-    public TMP_Text CfishText; //TMP text to display cost of fish
+    public int Costfish = 10; //integer to store cost of fish
+    public TMP_Text CostfishText; //TMP text to display cost of fish
     public float y0fish;
     public float tfish = 0; //float to store time since fist fish (or a change)
     public float afish = 9; //float to store A value for fish initial
@@ -49,14 +49,14 @@ public class FoodWeb1 : MonoBehaviour
         DaysText.text = "No. of days since start = " + Days; //update day text
         //organism time update
         tphytoplankton ++;
+        CostfishText.text = "Add fish plankton req = " + Costfish; //To reset Costfish text
 
         Nphtyoplankton = Rp(aphytoplankton, bphytoplankton, cphytoplankton, tphytoplankton); //Run log growth for phytoplankton
-        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton; //Update Nphyto text
+        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton; //Update Nphyto text   
 
         if (Nfish>0){
             tfish ++;
             Nfish = Rp(afish, bfish, cfish, tfish); //Run log growth for fish
-            print("start time nfish = " +Nfish);
             NfishText.text = "No. of fish = " + Nfish;
         }
         else if(Nfish ==0){Nfish=0;} // not sure how but this helped
@@ -64,18 +64,20 @@ public class FoodWeb1 : MonoBehaviour
         }
         
         public void AddFish(){
-            if (Nphtyoplankton >= Cfish){
+            if (Nphtyoplankton >= Costfish){
                 Nfish ++; //Fish counter increment
                 NfishText.text = "No. of fish = " + Nfish; //Update fish text
-                Nphtyoplankton = Nphtyoplankton - Cfish; //Subtract cost from no. of phytoplankton
+                Nphtyoplankton = Nphtyoplankton - Costfish; //Subtract cost from no. of phytoplankton
                 y0phytoplankton = Nphtyoplankton; //reset y0 
                 tphytoplankton = 0;  //reset tphyto
                 aphytoplankton = (cphytoplankton/y0phytoplankton -1); //reset aphyto
                 NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;  //Update phytoplankton text
-                Cfish = Cfish +10; //Increase cost
-                CfishText.text = "Add fish plankton req = " + Cfish; //Update cost text
+                Costfish = Costfish + 10; //Increase cost
+                CostfishText.text = "Add fish plankton req = " + Costfish; //Update cost text
                 }
-            else {CfishText.text = "Collect more plankton!";} //TO FIX LATER! MAKE IT APPEAR MORE CLEARER
+            else {
+                CostfishText.text = "Add more plankton! You need  " + Costfish + " more";
+                } 
         }
         
         public void RemoveFish(){
@@ -83,12 +85,38 @@ public class FoodWeb1 : MonoBehaviour
             if (Nfish >0){
                 Nfish --; //Fish counter decrease
                 NfishText.text = "No. of fish = " + Nfish; //Update fish text
-                if (Cfish >10){Cfish = Cfish -10;} //Decrease cost
-                CfishText.text = "Add fish plankton req = " + Cfish; //Update cost text
+                if (Costfish >10){Costfish = Costfish -10;} //Decrease cost
+                CostfishText.text = "Add fish plankton req = " + Costfish; //Update cost text
                 }
         }
     
-    public void Reset(){}
+    public void Reset(){
+        //PHYTOPLANKTON
+        Nphtyoplankton = 1; 
+        tphytoplankton = 0;
+        aphytoplankton=99; 
+        cphytoplankton =100; 
+        bphytoplankton = -0.679f;     
+        
+        //FISH
+        Nfish = 0;
+        Costfish = 10;
+        tfish = 0; 
+        afish = 9; 
+        bfish = -0.439f; 
+        cfish = 10; 
+        
+        y0phytoplankton = (float)Nphtyoplankton; 
+        y0fish = (float)Nfish;
+        Days =0;
+
+        //Update text
+        CostfishText.text = "Add fish plankton req = " + Costfish;
+        NfishText.text = "No. of fish = " + Nfish;
+        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;
+        DaysText.text = "No. of days since start = " + Days;
+
+    }
         
 
     public int Rp(float a, float b, float c, float t){
