@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using System;
 
-
 public class FoodWeb1 : MonoBehaviour
 {
     //TIME
@@ -14,38 +13,64 @@ public class FoodWeb1 : MonoBehaviour
     //PHYTOPLANKTON
     public TMP_Text NphytoText; 
     public species phytoplankton;
+
     //FISH
     public TMP_Text NfishText;
     public species fish;
 
-    void Start(){
-    //int n, float y0, float t, float c, float b, int cost
-        phytoplankton = new species(1, 1, 0, 100, -0.679f, 0);
-        fish = new species(1, 1, 0, 10, -0.439f, 10); //////for now fish =1
+    //SHARK
+    public TMP_Text NsharkText;
+    public species shark;
 
+    void Start(){
+    //float t, float c, float b, int cost
+        phytoplankton = new species(0, 100, -0.679f, 0);
+        phytoplankton.n= 1;
+        phytoplankton.y0 = 1;
+        fish = new species( 0, 10, -0.439f, 10); //////for now fish =1
+        fish.n =1;
+        fish.y0 =1;
+        shark = new species(0,5,-0.396f, 2);
+        shark.n=1;
+        shark.y0=1;
 
     }
 
-    public void DayClick(){
+    public void StartTime(){
         Days++;
         DaysText.text = "No. of days since start = " + Days; //update day text
         
         //Phytoplankton
+        if (phytoplankton.t==0){
+            phytoplankton.a = phytoplankton.avalue(); 
+        }
         phytoplankton.t ++;
-        phytoplankton.a = phytoplankton.avalue(); 
-        //is it bad to have to calculate a value every click? or only if t=0
         phytoplankton.n = phytoplankton.Rp(phytoplankton.t, phytoplankton.y0, phytoplankton.a);
         print("n phyto is = "+phytoplankton.n);
         NphytoText.text = "No. of phytoplankton = " + phytoplankton.n;
 
         //Fish
+        if (fish.t==0){
+            fish.a = fish.avalue();
+        }
         fish.t ++;
-        fish.a = fish.avalue();
-        //put something with calc a value only when t=0
         fish.n = fish.Rp(fish.t, fish.y0, fish.a);
         print("n fish is = " +fish.n);
         NfishText.text = "No. of fish = " + fish.n;
 
+        //Shark
+        if (shark.t==0){
+            shark.a= shark.avalue();
+        }
+        shark.t ++;
+        shark.n = shark.Rp(shark.t, shark.y0, shark.a);
+        print("n shark is = "+ shark.n);
+        NsharkText.text = "No. of sharks = " + shark.n;
+        
     }
+
+
+
+
 
 }
