@@ -7,128 +7,45 @@ using System;
 
 public class FoodWeb1 : MonoBehaviour
 {
-    //PHYTOPLANKTON
-    public int Nphtyoplankton = 1; //integer to store no. of phytoplankton 
-    //not float because Rp will convert things to int
-    public TMP_Text NphytoText; //TMP text to display no of clicks
-    public float y0phytoplankton; //float to store y0 of phytoplankton
-    public float tphytoplankton = 0;
-    public float aphytoplankton=99; //float to store A value for phytoplankton intial
-    public float cphytoplankton =100; //float to store value C value for phytoplankton
-    public float bphytoplankton = -0.679f; //float to store vB value for phytoplankton
-    
     //TIME
     public int Days; //Integer to store no. of days since start
     public TMP_Text DaysText; //TMP text to display no. of days
-
-    //FISH
-    public int Nfish = 0; //integer to store no. of fish
-    public TMP_Text NfishText; //TMP text to display no of fish
-    public int Costfish = 10; //integer to store cost of fish
-    public TMP_Text CostfishText; //TMP text to display cost of fish
-    public float y0fish;
-    public float tfish = 0; //float to store time since fist fish (or a change)
-    public float afish = 9; //float to store A value for fish initial
-    public float bfish = -0.439f; //float to store B value for fish
-    public float cfish = 10; //float to store C value for fish
-
-
- 
-    void Start(){
-    y0phytoplankton = (float)Nphtyoplankton; 
-    y0fish = (float)Nfish;
-
-    }
-    void Update()
-    {
-
-    }
-
-        public void StartTime(){
-        Days ++; //increase by one day
-        DaysText.text = "No. of days since start = " + Days; //update day text
-        //organism time update
-        tphytoplankton ++;
-        CostfishText.text = "Add fish plankton req = " + Costfish; //To reset Costfish text
-
-        Nphtyoplankton = Rp(aphytoplankton, bphytoplankton, cphytoplankton, tphytoplankton); //Run log growth for phytoplankton
-        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton; //Update Nphyto text   
-
-        if (Nfish>0){
-            tfish ++;
-            Nfish = Rp(afish, bfish, cfish, tfish); //Run log growth for fish
-            NfishText.text = "No. of fish = " + Nfish;
-        }
-        else if(Nfish ==0){Nfish=0;} // not sure how but this helped
-        
-        }
-        
-        public void AddFish(){
-            if (Nphtyoplankton >= Costfish){
-                Nfish ++; //Fish counter increment
-                NfishText.text = "No. of fish = " + Nfish; //Update fish text
-                Nphtyoplankton = Nphtyoplankton - Costfish; //Subtract cost from no. of phytoplankton
-                y0phytoplankton = Nphtyoplankton; //reset y0 
-                tphytoplankton = 0;  //reset tphyto
-                aphytoplankton = (cphytoplankton/y0phytoplankton -1); //reset aphyto
-                NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;  //Update phytoplankton text
-                Costfish = Costfish + 10; //Increase cost
-                CostfishText.text = "Add fish plankton req = " + Costfish; //Update cost text
-                }
-            else {
-                CostfishText.text = "Add more plankton! You need  " + Costfish + " more";
-                } 
-        }
-        
-        public void RemoveFish(){
-            //check for <0 fish
-            if (Nfish >0){
-                Nfish --; //Fish counter decrease
-                NfishText.text = "No. of fish = " + Nfish; //Update fish text
-                if (Costfish >10){Costfish = Costfish -10;} //Decrease cost
-                CostfishText.text = "Add fish plankton req = " + Costfish; //Update cost text
-                }
-        }
     
-    public void Reset(){
-        //PHYTOPLANKTON
-        Nphtyoplankton = 1; 
-        tphytoplankton = 0;
-        aphytoplankton=99; 
-        cphytoplankton =100; 
-        bphytoplankton = -0.679f;     
-        
-        //FISH
-        Nfish = 0;
-        Costfish = 10;
-        tfish = 0; 
-        afish = 9; 
-        bfish = -0.439f; 
-        cfish = 10; 
-        
-        y0phytoplankton = (float)Nphtyoplankton; 
-        y0fish = (float)Nfish;
-        Days =0;
+    //PHYTOPLANKTON
+    public TMP_Text NphytoText; 
+    public species phytoplankton;
+    //FISH
+    public TMP_Text NfishText;
+    public species fish;
 
-        //Update text
-        CostfishText.text = "Add fish plankton req = " + Costfish;
-        NfishText.text = "No. of fish = " + Nfish;
-        NphytoText.text = "No. of phytoplankton = " + Nphtyoplankton;
-        DaysText.text = "No. of days since start = " + Days;
+    void Start(){
+    //int n, float y0, float t, float c, float b, int cost
+        phytoplankton = new species(1, 1, 0, 100, -0.679f, 0);
+        fish = new species(1, 1, 0, 10, -0.439f, 10); //////for now fish =1
+
 
     }
+
+    public void DayClick(){
+        Days++;
+        DaysText.text = "No. of days since start = " + Days; //update day text
         
+        //Phytoplankton
+        phytoplankton.t ++;
+        phytoplankton.a = phytoplankton.avalue(); 
+        //is it bad to have to calculate a value every click? or only if t=0
+        phytoplankton.n = phytoplankton.Rp(phytoplankton.t, phytoplankton.y0, phytoplankton.a);
+        print("n phyto is = "+phytoplankton.n);
+        NphytoText.text = "No. of phytoplankton = " + phytoplankton.n;
 
-    public int Rp(float a, float b, float c, float t){
-        //int c is carrying capacity
-        //int a is (int c/int y0)-1
-        //float b (in decimals, see derivation)
-        //take time in terms of how many t has it been since this specfic y0 was used
+        //Fish
+        fish.t ++;
+        fish.a = fish.avalue();
+        //put something with calc a value only when t=0
+        fish.n = fish.Rp(fish.t, fish.y0, fish.a);
+        print("n fish is = " +fish.n);
+        NfishText.text = "No. of fish = " + fish.n;
 
-        double i1 = Math.Exp(b*t);
-        float i2 = (float)i1;
-        float yt = c/(1 + a*i2);
-        int result = (int)yt;
-        return result;    }
+    }
 
 }
