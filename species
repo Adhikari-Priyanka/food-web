@@ -1,0 +1,43 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using System;
+
+public class species {
+    public int n; //integer to store no. of species
+    //not float because Rp will convert things to int
+    public float y0; //float to store y0
+    public float t = 0;
+    public float a; //float to store A value
+    public float c; //float to store value C
+    public float b; //float to store B value
+    public int cost; //cost to create species
+
+    public species (int n, float y0, float t, float c, float b, int cost){
+        this.n = n;
+        this.y0 = y0;
+        this.t = t;
+        this.c = c;
+        this.b = b;
+        this.cost = cost;
+    }
+
+    public float avalue(){
+        a = c/y0 -1;
+        return a;
+    }
+    
+    public int Rp(float t, float y0, float a){
+        //int c is carrying capacity
+        //int a is (int c/int y0)-1
+        //float b (in decimals, see derivation)
+        //take time in terms of how many t has it been since this specfic y0 was used
+
+        double i1 = Math.Exp(b*t);
+        float i2 = (float)i1;
+        float yt = c/(1 + a*i2);
+        int result = (int)yt;
+        return result;    }
+
+
+}
